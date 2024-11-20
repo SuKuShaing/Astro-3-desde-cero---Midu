@@ -2,8 +2,20 @@
 import type { GetStaticPaths } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import { getLatestLaunches } from "../../services/spacex";
+interface Launch {
+	id: string;
+	links: {
+		patch: {
+			small: string;
+		};
+	};
+	details: string | null;
+	flight_number: number;
+	success: boolean;
+}
+
 interface Props {
-    id: string;
+	id: string;
 }
 
 const { id } = Astro.params;
@@ -21,43 +33,52 @@ if (id) {
 	Astro.redirect("/");
 }
 
+// Esta función genera las rutas estáticas (getStaticPaths) para cada lanzamiento
+// crea los params necesarios para cada página estática
 export async function getStaticPaths() {
-    // llamar a la api de spacex para obtener los ids de los lanzamientos
-    const res = await fetch("https://api.spacexdata.com/v5/launches/query", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            query: {},
-            options: {
-                sort: {
-                    date_unix: "asc",
-                },
-                limit: 12,
-            },
-        }),
-    });
+	// llamar a la api de spacex para obtener los ids de los lanzamientos
+	const res = await fetch("https://api.spacexdata.com/v5/launches/query", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			query: {},
+			options: {
+				sort: {
+					date_unix: "asc",
+				},
+				limit: 12,
+			},
+		}),
+	});
 
-    const { docs: launches } = await res.json();
+	const { docs: launches }: { docs: Launch[] } = await res.json();
 
+	// crear un array de objetos con el id de cada lanzamiento
+	// para transformarlos páginas estáticas
+	// return [
+	//     {params: {id: "5eb87cdaffd86e000604b32b"}},
+	// ]
 
-    // crear un array de objetos con el id de cada lanzamiento
-    // para transformarlos páginas estáticas
-    // return [
-    //     {params: {id: "5eb87cdaffd86e000604b32b"}},
-    // ]
-
-    return launches.map((launch) => ({
-        params: {
-            id: launch.id,
-        },
-    }));
+	return launches.map((launch) => ({
+		params: {
+			id: launch.id,
+		},
+	}));
 }
-
 ---
-<Layout title=`Launch ${id}`>
-    <article>
-        {launch?.id}
-    </article>
+
+<Layout title=`Launch ${launch?.flight_number} - Id:${id}`>
+	<article class="flex gap-y-4 flex-col">
+		<img
+			class="w-52 h-auto"
+			src={launch?.links?.patch.small}
+			alt={launch?.name}
+		/>
+		<h2 class="text-4xl text-white font-bold">
+			Launch #{launch?.flight_number}
+		</h2>
+		<p>{launch?.id}</p>
+	</article>
 </Layout>
