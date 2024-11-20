@@ -1,10 +1,10 @@
-import { type APISpaceXResponse } from "../types/api";
+// import { type APISpaceXResponse } from "../types/api";
 
 export const getLatestById = async ({ id }: { id: string }) => {
 	const res = await fetch(`https://api.spacexdata.com/v5/launches/${id}`);
 
-	const { docs: launches } = (await res.json()) as APISpaceXResponse;
-	return launches;
+	// const { docs: launches } = (await res.json()) as APISpaceXResponse;
+	// return launches;
 };
 
 
@@ -25,6 +25,6 @@ export const getLatestLaunches = async () => {
 		}),
 	});
 
-	const { docs: launches } = (await res.json()) as APISpaceXResponse;
-	return launches;
+	// const { docs: launches } = (await res.json()) as APISpaceXResponse;
+	// return launches;
 };
