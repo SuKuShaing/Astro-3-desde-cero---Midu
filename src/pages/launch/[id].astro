@@ -1,12 +1,13 @@
 ---
 import type { GetStaticPaths } from "astro";
 import Layout from "../../layouts/Layout.astro";
-// interface Props {
-// 	id: string;
-// }
+import { getLatestLaunches } from "../../services/spacex";
+interface Props {
+    id: string;
+}
 
 const { id } = Astro.params;
-console.log({id});
+// console.log({id});
 
 let launch = null;
 
@@ -14,20 +15,45 @@ if (id) {
 	const res = await fetch(`https://api.spacexdata.com/v5/launches/${id}`);
 	launch = await res.json();
 
-	console.log(id);
-	console.log(launch);
+	// console.log(id);
+	// console.log(launch);
 } else {
 	Astro.redirect("/");
 }
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
     // llamar a la api de spacex para obtener los ids de los lanzamientos
-    return [
-        {params: {id: "5eb87cdaffd86e000604b32b"}},
-    ]
+    const res = await fetch("https://api.spacexdata.com/v5/launches/query", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            query: {},
+            options: {
+                sort: {
+                    date_unix: "asc",
+                },
+                limit: 12,
+            },
+        }),
+    });
+
+    const { docs: launches } = await res.json();
+
+
+    // crear un array de objetos con el id de cada lanzamiento
+    // para transformarlos páginas estáticas
+    // return [
+    //     {params: {id: "5eb87cdaffd86e000604b32b"}},
+    // ]
+
+    return launches.map((launch) => ({
+        params: {
+            id: launch.id,
+        },
+    }));
 }
-
-
 
 ---
 <Layout title=`Launch ${id}`>

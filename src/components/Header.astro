@@ -1,7 +1,7 @@
 ---
 import HeaderButton from "./HeaderButton.astro";
 
-console.log("Javascript");
+// console.log("Javascript");
 ---
 
 <header class="py-8 px-4 mx-auto max-w-xl lg:py-16 lg:px-6">
@@ -17,7 +17,7 @@ console.log("Javascript");
 	<nav
 		class="flex flex-col items-center justify-between w-full text-center md:flex-row"
 	>
-		<HeaderButton class="text-white" href="/">
+		<HeaderButton href="/">
 			<svg
 				slot="before"
 				x-bind:width="size"
@@ -40,7 +40,7 @@ console.log("Javascript");
 			</svg>
 			Últimos Lanzamientos</HeaderButton
 		>
-		<HeaderButton class="text-white" href="/about">
+		<HeaderButton href="/about">
 			<svg
 				slot="before"
 				viewBox="0 0 24 24"
@@ -58,7 +58,7 @@ console.log("Javascript");
 			</svg>
 			Sobre el proyecto</HeaderButton
 		>
-		<HeaderButton class="text-white" href="/oldest">
+		<HeaderButton href="/oldest">
 			<svg
                 slot="before"
 				x-bind:width="size"
